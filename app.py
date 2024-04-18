@@ -1,14 +1,18 @@
 import sys
-from langchain import PromptTemplate 
-from langchain_community.chat_models import ChatOpenAI
-from langchain_community.chat_models import ChatOpenAI
+from langchain_community.llms import Ollama
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
-from langchain.chains import LLMChain 
+llm = Ollama(model = "llama2")
 
-from model.constants import (
-       OPEN_AI_KEY
-        )
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are the best school level teacher who can explain mathematical concepts very well."),
+    ("user", "{input}")
+])
 
-llm = ChatOpenAI(openai_api_key=OPEN_AI_KEY)
+output_parser = StrOutputParser()
 
-print(llm.invoke("how can langsmith help with testing?"))
+chain = prompt | llm | output_parser
+
+print(chain.invoke({"input": "explain integration with some examples"}))
+
